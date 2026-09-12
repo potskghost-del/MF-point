@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MF-Point - Hệ Thống Tích Điểm Đổi Thưởng</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#090d16',
+                            purple: '#7e22ce',
+                            blue: '#2563eb',
+                            glow: '#a855f7'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- External Publisher Ad Script -->
+    <script src="https://pl30993263.profitableratecpmnetwork.com/42/f2/ee/42f2eeac567c0aea22cc1f93fca5b371.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #060913;
+            color: #f3f4f6;
+        }
+        .glow-purple {
+            box-shadow: 0 0 25px -5px rgba(168, 85, 247, 0.4);
+        }
+        .glow-blue {
+            box-shadow: 0 0 25px -5px rgba(37, 99, 235, 0.4);
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #6b21a8;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gradient-to-br from-slate-950 via-purple-950/40 to-slate-950 text-slate-100 overflow-x-hidden selection:bg-purple-600 selection:text-white">
+
+    <!-- Header Bar -->
+    <header id="mainHeader" class="hidden sticky top-0 z-40 w-full glass-card border-b border-purple-900/30 px-4 py-3 shadow-lg">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <!-- Large 3-line Hamburger Menu Button -->
+            <button id="openMenuBtn" class="p-2.5 rounded-xl bg-purple-950/60 border border-purple-600/40 text-purple-300 hover:text-white hover:bg-purple-900/80 transition-all active:scale-95 flex items-center justify-center">
+                <i class="fa-solid fa-bars text-2xl"></i>
+            </button>
+
+            <!-- Logo -->
+            <div class="flex items-center gap-2">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-600/30">
+                    <i class="fa-solid fa-coins text-yellow-300 text-lg"></i>
+                </div>
+                <span class="font-extrabold text-xl tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-300 to-indigo-400">
+                    MF-POINT
+                </span>
+            </div>
+
+            <!-- Header Balance Display -->
+            <div class="flex items-center gap-3">
+                <div class="bg-slate-900/90 border border-purple-500/30 px-3 py-1.5 rounded-full flex items-center gap-2 shadow-inner">
+                    <i class="fa-solid fa-coins text-yellow-400 animate-pulse text-sm"></i>
+                    <span id="headerPoints" class="font-bold text-sm text-yellow-300">0</span>
+                    <span class="text-[10px] text-purple-300 font-semibold uppercase">PTS</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar Drawer Menu -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden opacity-0 transition-opacity duration-300">
+        <div id="sidebar" class="w-80 max-w-[85vw] h-full bg-slate-900/95 border-r border-purple-500/30 p-5 flex flex-col justify-between transform -translate-x-full transition-transform duration-300 ease-out shadow-2xl">
+            <div>
+                <!-- Sidebar Header -->
+                <div class="flex items-center justify-between pb-5 border-b border-purple-900/40">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-purple-300 font-bold">
+                            <i class="fa-solid fa-user-gear text-lg"></i>
+                        </div>
+                        <div>
+                            <div id="sidebarUsername" class="font-bold text-slate-100 truncate max-w-[140px]">Tài khoản</div>
+                            <div id="sidebarUserId" class="text-xs font-mono text-purple-400 font-semibold">ID: -----</div>
+                        </div>
+                    </div>
+                    <button id="closeMenuBtn" class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="mt-6 space-y-2">
+                    <button data-target="homeTab" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition-all text-slate-300 hover:bg-purple-950/50 hover:text-purple-300 active border border-transparent">
+                        <i class="fa-solid fa-house w-5 text-center text-blue-400"></i>
+                        <span>Trang Chủ</span>
+                    </button>
+                    <button data-target="transferTab" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition-all text-slate-300 hover:bg-purple-950/50 hover:text-purple-300 border border-transparent">
+                        <i class="fa-solid fa-paper-plane w-5 text-center text-purple-400"></i>
+                        <span>Chuyển Điểm / Tạo Mã</span>
+                    </button>
+                    <button data-target="redeemTab" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition-all text-slate-300 hover:bg-purple-950/50 hover:text-purple-300 border border-transparent">
+                        <i class="fa-solid fa-ticket w-5 text-center text-emerald-400"></i>
+                        <span>Nhập Mã Thưởng</span>
+                    </button>
+                    <button data-target="luckyTab" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition-all text-slate-300 hover:bg-purple-950/50 hover:text-purple-300 border border-transparent">
+                        <i class="fa-solid fa-dice-five w-5 text-center text-yellow-400"></i>
+                        <span>Vé May Mắn</span>
+                    </button>
+                    <button data-target="notifTab" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition-all text-slate-300 hover:bg-purple-950/50 hover:text-purple-300 border border-transparent">
+                        <i class="fa-solid fa-bell w-5 text-center text-indigo-400"></i>
+                        <span>Thông Báo</span>
+                    </button>
+                    <button data-target="settingsTab" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition-all text-slate-300 hover:bg-purple-950/50 hover:text-purple-300 border border-transparent">
+                        <i class="fa-solid fa-gear w-5 text-center text-slate-400"></i>
+                        <span>Cài Đặt</span>
+                    </button>
+                    <button id="adminNavBtn" data-target="adminTab" class="hidden nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition-all text-red-400 hover:bg-red-950/30 border border-red-500/20">
+                        <i class="fa-solid fa-user-shield w-5 text-center text-red-500"></i>
+                        <span>Bảng Quản Trị (Admin)</span>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Footer in Menu -->
+            <div class="pt-4 border-t border-purple-900/40 text-center text-xs text-slate-500">
+                MF-Point System &copy; 2026
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 max-w-4xl w-full mx-auto p-4 md:p-6 pb-20">
+        
+        <!-- 1. AUTH SCREEN (Login / Register) -->
+        <section id="authSection" class="min-h-[80vh] flex flex-col justify-center items-center">
+            <div class="w-full max-w-md glass-card rounded-3xl p-6 md:p-8 shadow-2xl border border-purple-500/30 relative overflow-hidden">
+                <div class="absolute -top-20 -left-20 w-40 h-40 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-20 -right-20 w-40 h-40 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                <!-- App Header -->
+                <div class="text-center mb-8">
+                    <div class="inline-flex p-3 rounded-2xl bg-gradient-to-tr from-blue-600 to-purple-600 text-white mb-3 shadow-lg shadow-purple-600/40">
+                        <i class="fa-solid fa-coins text-3xl"></i>
+                    </div>
+                    <h1 class="text-2xl font-extrabold text-white tracking-wide">MF-POINT</h1>
+                    <p class="text-xs text-purple-300/80 mt-1">Đăng nhập để tích điểm và đổi thưởng ngay hôm nay</p>
+                </div>
+
+                <!-- LOGIN FORM -->
+                <form id="loginForm" class="space-y-4">
+                    <h2 class="text-lg font-bold text-slate-200 border-b border-purple-900/40 pb-2">Đăng Nhập</h2>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">ID Người Dùng (VD: 00001)</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-id-card absolute left-3.5 top-3.5 text-slate-500 text-sm"></i>
+                            <input type="text" id="loginId" required placeholder="Nhập ID tài khoản" class="w-full bg-slate-950/80 border border-purple-900/50 focus:border-purple-500 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-100 placeholder-slate-600 focus:outline-none transition-all">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Mật Khẩu</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-slate-500 text-sm"></i>
+                            <input type="password" id="loginPass" required placeholder="••••••••" class="w-full bg-slate-950/80 border border-purple-900/50 focus:border-purple-500 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-100 placeholder-slate-600 focus:outline-none transition-all">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 font-bold rounded-xl shadow-lg shadow-purple-600/30 text-sm transition-all active:scale-[0.98]">
+                        Đăng Nhập
+                    </button>
+                    <div class="text-center pt-2">
+                        <span class="text-xs text-slate-400">Bạn chưa có tài khoản? </span>
+                        <button type="button" id="switchToReg" class="text-xs font-bold text-purple-400 hover:underline">Đăng ký ngay</button>
+                    </div>
+                </form>
+
+                <!-- REGISTER FORM -->
+                <form id="regForm" class="space-y-4 hidden">
+                    <h2 class="text-lg font-bold text-slate-200 border-b border-purple-900/40 pb-2">Đăng Ký Tài Khoản</h2>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Tên Tài Khoản (Có thể trùng lặp)</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user absolute left-3.5 top-3.5 text-slate-500 text-sm"></i>
+                            <input type="text" id="regName" required placeholder="Nhập tên tài khoản" class="w-full bg-slate-950/80 border border-purple-900/50 focus:border-purple-500 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-100 placeholder-slate-600 focus:outline-none transition-all">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Mật Khẩu</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-key absolute left-3.5 top-3.5 text-slate-500 text-sm"></i>
+                            <input type="password" id="regPass" required placeholder="Tạo mật khẩu" class="w-full bg-slate-950/80 border border-purple-900/50 focus:border-purple-500 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-100 placeholder-slate-600 focus:outline-none transition-all">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 font-bold rounded-xl shadow-lg shadow-purple-600/30 text-sm transition-all active:scale-[0.98]">
+                        Đăng Ký & Tạo ID
+                    </button>
+                    <div class="text-center pt-2">
+                        <span class="text-xs text-slate-400">Đã có tài khoản? </span>
+                        <button type="button" id="switchToLogin" class="text-xs font-bold text-purple-400 hover:underline">Đăng nhập</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- APP CONTENT SECTIONS (Hidden until logged in) -->
+        <div id="appSection" class="hidden space-y-6">
+
+            <!-- 1. HOME TAB -->
+            <section id="homeTab" class="tab-content space-y-6">
+                <!-- User Status Banner -->
+                <div class="glass-card rounded-3xl p-6 relative overflow-hidden bg-gradient-to-r from-slate-900 via-purple-950/60 to-slate-900 border border-purple-500/30">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div class="space-y-1">
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-purple-900/60 text-purple-300 border border-purple-500/30">
+                                ID: <span id="homeUserId">00001</span>
+                            </span>
+                            <h2 id="homeUserName" class="text-2xl font-extrabold text-white">Xin chào User</h2>
+                            <p class="text-xs text-slate-400">Nhiệm vụ hàng ngày sẽ làm mới lúc 00:00 (Giờ VN)</p>
+                        </div>
+                        
+                        <!-- Main Points Frame -->
+                        <div class="p-4 rounded-2xl bg-slate-950/80 border border-yellow-500/30 flex items-center gap-4 shadow-xl">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-yellow-500 to-amber-300 flex items-center justify-center text-slate-950 text-2xl shadow-lg shadow-yellow-500/20">
+                                <i class="fa-solid fa-coins"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-400 uppercase font-semibold">Số Points Hiện Có</span>
+                                <div class="text-2xl font-black text-yellow-300" id="homePoints">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Tasks Container -->
+                <div class="glass-card rounded-3xl p-6 border border-purple-900/40">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="fa-solid fa-list-check text-purple-400 text-lg"></i>
+                        <h3 class="text-lg font-bold text-white">Nhiệm Vụ Hàng Ngày</h3>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- Task 1: Daily Login -->
+                        <div class="p-4 rounded-2xl bg-slate-950/50 border border-purple-900/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="p-3 rounded-xl bg-blue-900/40 text-blue-400">
+                                    <i class="fa-solid fa-calendar-check text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-slate-200">Điểm Danh Hàng Ngày</h4>
+                                    <p class="text-xs text-slate-400">Nhận ngay 10 Points mỗi ngày</p>
+                                </div>
+                            </div>
+                            <button id="claimDailyBtn" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 disabled:hover:bg-purple-600 text-xs font-bold rounded-xl transition-all shadow-md">
+                                Nhận 10 PTS
+                            </button>
+                        </div>
+
+                        <!-- Task 2: Shortlink Vượt Link -->
+                        <div class="p-4 rounded-2xl bg-slate-950/50 border border-purple-900/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="p-3 rounded-xl bg-emerald-900/40 text-emerald-400">
+                                    <i class="fa-solid fa-link text-xl"></i>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <h4 class="font-bold text-sm text-slate-200">Vượt Link Nhiệm Vụ</h4>
+                                        <span id="shortlinkProgress" class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-purple-300 font-semibold">0/5</span>
+                                    </div>
+                                    <p class="text-xs text-slate-400">Thực hiện 5 lần vượt link để nhận 150 Points</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button id="visitShortlinkBtn" class="px-3 py-2 bg-blue-600/80 hover:bg-blue-600 text-xs font-bold rounded-xl transition-all">
+                                    Mở Link
+                                </button>
+                                <button id="claimShortlinkBtn" disabled class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:hover:bg-emerald-600 text-xs font-bold rounded-xl transition-all">
+                                    Nhận 150 PTS
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Task 3: Buy Lucky Ticket Task -->
+                        <div class="p-4 rounded-2xl bg-slate-950/50 border border-purple-900/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="p-3 rounded-xl bg-yellow-900/40 text-yellow-400">
+                                    <i class="fa-solid fa-ticket text-xl"></i>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <h4 class="font-bold text-sm text-slate-200">Mua Vé May Mắn</h4>
+                                        <span id="luckyTaskProgress" class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-yellow-300 font-semibold">0/3</span>
+                                    </div>
+                                    <p class="text-xs text-slate-400">Mua đủ 3 vé may mắn để nhận thưởng 20 Points</p>
+                                </div>
+                            </div>
+                            <button id="claimLuckyTaskBtn" disabled class="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 disabled:opacity-50 disabled:hover:bg-yellow-600 text-xs font-bold text-slate-950 rounded-xl transition-all shadow-md">
+                                Nhận 20 PTS
+                            </button>
+                        </div>
+
+                        <!-- Task 4: Watch Ads -->
+                        <div class="p-4 rounded-2xl bg-slate-950/50 border border-purple-900/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="p-3 rounded-xl bg-indigo-900/40 text-indigo-400">
+                                    <i class="fa-solid fa-rectangle-ad text-xl"></i>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <h4 class="font-bold text-sm text-slate-200">Xem Quảng Cáo</h4>
+                                        <span id="adTaskProgress" class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-indigo-300 font-semibold">0/3</span>
+                                    </div>
+                                    <p class="text-xs text-slate-400">Xem quảng cáo 3 lần để nhận 50 Points</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button id="watchAdBtn" class="px-3 py-2 bg-indigo-600/80 hover:bg-indigo-600 text-xs font-bold rounded-xl transition-all">
+                                    Xem Quảng Cáo
+                                </button>
+                                <button id="claimAdTaskBtn" disabled class="px-3 py-2 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 disabled:hover:bg-purple-600 text-xs font-bold rounded-xl transition-all">
+                                    Nhận 50 PTS
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. TRANSFER & VOUCHER TAB -->
+            <section id="transferTab" class="tab-content space-y-6 hidden">
+                <!-- Direct Points Transfer -->
+                <div class="glass-card rounded-3xl p-6 border border-purple-900/40">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="fa-solid fa-paper-plane text-purple-400 text-lg"></i>
+                        <h3 class="text-lg font-bold text-white">Chuyển Điểm Cho ID Khác</h3>
+                    </div>
+                    <form id="transferForm" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">ID Người Nhận</label>
+                            <input type="text" id="transferTargetId" required placeholder="Nhập ID người nhận (VD: 00002)" class="w-full bg-slate-950/80 border border-purple-900/50 focus:border-purple-500 rounded-xl py-2.5 px-4 text-sm text-slate-100 placeholder-slate-600 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Số Points Muốn Chuyển</label>
+                            <input type="number" id="transferAmount" min="1" required placeholder="Số points..." class="w-full bg-slate-950/80 border border-purple-900/50 focus:border-purple-500 rounded-xl py-2.5 px-4 text-sm text-slate-100 placeholder-slate-600 focus:outline-none">
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-purple-600 hover:bg-purple-500 font-bold rounded-xl shadow-lg transition-all text-sm">
+                            Xác Nhận Chuyển Điểm
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Create Voucher Code -->
+                <div class="glass-card rounded-3xl p-6 border border-purple-900/40">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fa-solid fa-barcode text-blue-400 text-lg"></i>
+                        <h3 class="text-lg font-bold text-white">Tạo Mã Code Nạp Points</h3>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-4">Hệ thống sẽ trừ điểm của bạn để tạo mã. Mã có thể gửi cho người khác nhập vào.</p>
+                    
+                    <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 gap-3">
+                        <button data-value="10" class="create-code-btn p-3 rounded-xl bg-slate-950/80 border border-purple-900/60 hover:border-purple-500 font-bold text-yellow-400 text-center transition-all">10 PTS</button>
+                        <button data-value="20" class="create-code-btn p-3 rounded-xl bg-slate-950/80 border border-purple-900/60 hover:border-purple-500 font-bold text-yellow-400 text-center transition-all">20 PTS</button>
+                        <button data-value="50" class="create-code-btn p-3 rounded-xl bg-slate-950/80 border border-purple-900/60 hover:border-purple-500 font-bold text-yellow-400 text-center transition-all">50 PTS</button>
+                        <button data-value="100" class="create-code-btn p-3 rounded-xl bg-slate-950/80 border border-purple-900/60 hover:border-purple-500 font-bold text-yellow-400 text-center transition-all">100 PTS</button>
+                        <button data-value="200" class="create-code-btn p-3 rounded-xl bg-slate-950/80 border border-purple-900/60 hover:border-purple-500 font-bold text-yellow-400 text-center transition-all">200 PTS</button>
+                        <button data-value="500" class="create-code-btn p-3 rounded-xl bg-slate-950/80 border border-purple-900/60 hover:border-purple-500 font-bold text-yellow-400 text-center transition-all">500 PTS</button>
+                        <button data-value="1000" class="create-code-btn p-3 rounded-xl bg-slate-950/80 border border-purple-900/60 hover:border-purple-500 font-bold text-yellow-400 text-center transition-all">1000 PTS</button>
+                        <button data-value="2000" class="create-code-btn p-3 rounded-xl bg-slate-950/80 border border-purple-900/60 hover:border-purple-500 font-bold text-yellow-400 text-center transition-all">2000 PTS</button>
+                        <button data-value="5000" class="create-code-btn p-3 rounded-xl bg-slate-950/80 border border-purple-900/60 hover:border-purple-500 font-bold text-yellow-400 text-center transition-all">5000 PTS</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. REDEEM TAB -->
+            <section id="redeemTab" class="tab-content space-y-6 hidden">
+                <div class="glass-card rounded-3xl p-6 border border-purple-900/40 max-w-lg mx-auto">
+                    <div class="text-center mb-6">
+                        <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-emerald-950/60 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-2xl">
+                            <i class="fa-solid fa-gift"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white">Nhập Mã Đổi Thưởng</h3>
+                        <p class="text-xs text-slate-400 mt-1">Nhập mã voucher, mã vé may mắn hoặc mã tân thủ</p>
+                    </div>
+
+                    <form id="redeemForm" class="space-y-4">
+                        <div class="relative">
+                            <input type="text" id="redeemInput" required placeholder="Nhập mã tại đây..." class="w-full bg-slate-950/80 border border-purple-900/60 focus:border-purple-500 rounded-xl py-3 px-4 text-center font-mono uppercase tracking-widest text-lg font-bold text-purple-300 placeholder-slate-600 focus:outline-none">
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl shadow-lg transition-all text-sm">
+                            Đổi Thưởng Ngay
+                        </button>
+                    </form>
+
+                    <div class="mt-6 p-4 rounded-2xl bg-slate-950/40 border border-purple-900/30 text-xs text-slate-400 text-center">
+                        💡 <span class="font-semibold text-slate-300">Gợi ý cho bạn:</span> Nhập mã <span class="text-emerald-400 font-mono font-bold">ABC123</span> để nhận ngay <span class="text-yellow-400 font-bold">200 Points</span> cho người mới!
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. LUCKY TICKET TAB -->
+            <section id="luckyTab" class="tab-content space-y-6 hidden">
+                <div class="glass-card rounded-3xl p-6 border border-purple-900/40">
+                    <div class="text-center mb-6">
+                        <div class="inline-flex p-3 rounded-2xl bg-yellow-950/60 border border-yellow-500/30 text-yellow-400 mb-2">
+                            <i class="fa-solid fa-dice-five text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white">Vé May Mắn Đổi Điểm</h3>
+                        <p class="text-xs text-slate-400 mt-1">Giá mỗi vé: <span class="text-yellow-400 font-bold">15 Points</span></p>
+                    </div>
+
+                    <!-- Odds Table -->
+                    <div class="mb-6 p-4 rounded-2xl bg-slate-950/60 border border-purple-900/40">
+                        <h4 class="text-xs font-bold uppercase text-purple-300 mb-3 text-center">Tỷ Lệ Phần Thưởng</h4>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                            <div class="p-2 rounded bg-slate-900 border border-purple-900/30 flex justify-between">
+                                <span class="text-slate-400">May mắn lần sau:</span>
+                                <span class="font-bold text-slate-300">40%</span>
+                            </div>
+                            <div class="p-2 rounded bg-slate-900 border border-purple-900/30 flex justify-between">
+                                <span class="text-slate-400">5 Points:</span>
+                                <span class="font-bold text-yellow-400">25%</span>
+                            </div>
+                            <div class="p-2 rounded bg-slate-900 border border-purple-900/30 flex justify-between">
+                                <span class="text-slate-400">10 Points:</span>
+                                <span class="font-bold text-yellow-400">15%</span>
+                            </div>
+                            <div class="p-2 rounded bg-slate-900 border border-purple-900/30 flex justify-between">
+                                <span class="text-slate-400">20 Points:</span>
+                                <span class="font-bold text-yellow-400">10%</span>
+                            </div>
+                            <div class="p-2 rounded bg-slate-900 border border-purple-900/30 flex justify-between">
+                                <span class="text-slate-400">50 Points:</span>
+                                <span class="font-bold text-yellow-400">6%</span>
+                            </div>
+                            <div class="p-2 rounded bg-slate-900 border border-purple-900/30 flex justify-between">
+                                <span class="text-slate-400">100 Points:</span>
+                                <span class="font-bold text-yellow-400">3%</span>
+                            </div>
+                            <div class="p-2 rounded bg-slate-900 border border-purple-900/30 flex justify-between col-span-2 sm:col-span-3">
+                                <span class="text-purple-300 font-bold">🎉 1000 Points (Giải Đặc Biệt):</span>
+                                <span class="font-bold text-yellow-400">1%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <button id="buyLuckyTicketBtn" class="px-8 py-3.5 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 font-extrabold text-slate-950 rounded-2xl shadow-lg shadow-yellow-500/20 text-base transition-all active:scale-95">
+                            <i class="fa-solid fa-ticket mr-2"></i> Mua Vé (15 Points)
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. NOTIFICATIONS TAB -->
+            <section id="notifTab" class="tab-content space-y-6 hidden">
+                <div class="glass-card rounded-3xl p-6 border border-purple-900/40">
+                    <div class="flex items-center justify-between mb-4 border-b border-purple-900/40 pb-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-bell text-indigo-400 text-lg"></i>
+                            <h3 class="text-lg font-bold text-white">Lịch Sử & Thông Báo</h3>
+                        </div>
+                        <span id="notifCount" class="text-xs px-2 py-0.5 rounded-full bg-purple-900 text-purple-300 font-bold">0</span>
+                    </div>
+
+                    <div id="notifList" class="space-y-3 max-h-[400px] overflow-y-auto pr-1 custom-scrollbar">
+                        <!-- Notifications injected via JS -->
+                        <p class="text-center text-xs text-slate-500 py-6">Chưa có thông báo nào</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. SETTINGS TAB -->
+            <section id="settingsTab" class="tab-content space-y-6 hidden">
+                <div class="glass-card rounded-3xl p-6 border border-purple-900/40 space-y-6">
+                    <h3 class="text-lg font-bold text-white border-b border-purple-900/40 pb-2">Cài Đặt Tài Khoản</h3>
+
+                    <!-- Change Password -->
+                    <form id="changePassForm" class="space-y-3 bg-slate-950/50 p-4 rounded-2xl border border-purple-900/30">
+                        <h4 class="text-sm font-bold text-purple-300">Đổi Mật Khẩu</h4>
+                        <div>
+                            <input type="password" id="oldPass" required placeholder="Mật khẩu hiện tại" class="w-full bg-slate-900 border border-purple-900/50 rounded-xl py-2 px-3 text-xs text-slate-100 placeholder-slate-600 focus:outline-none">
+                        </div>
+                        <div>
+                            <input type="password" id="newPass" required placeholder="Mật khẩu mới" class="w-full bg-slate-900 border border-purple-900/50 rounded-xl py-2 px-3 text-xs text-slate-100 placeholder-slate-600 focus:outline-none">
+                        </div>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-xs font-bold rounded-xl transition-all">
+                            Lưu Mật Khẩu
+                        </button>
+                    </form>
+
+                    <!-- Account Actions -->
+                    <div class="pt-2 flex flex-col sm:flex-row gap-3">
+                        <button id="logoutBtn" class="flex-1 py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl transition-all border border-slate-700">
+                            <i class="fa-solid fa-right-from-bracket mr-1.5"></i> Đăng Xuất
+                        </button>
+                        <button id="deleteAccBtn" class="flex-1 py-3 px-4 bg-red-950/60 hover:bg-red-900 text-red-300 font-bold text-xs rounded-xl transition-all border border-red-800/40">
+                            <i class="fa-solid fa-user-xmark mr-1.5"></i> Xoá Tài Khoản
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7. ADMIN TAB (Hidden) -->
+            <section id="adminTab" class="tab-content space-y-6 hidden">
+                <div class="glass-card rounded-3xl p-6 border border-red-500/30">
+                    <div class="flex items-center gap-2 mb-4 border-b border-red-900/40 pb-3">
+                        <i class="fa-solid fa-user-shield text-red-500 text-xl"></i>
+                        <div>
+                            <h3 class="text-lg font-bold text-red-400">Bảng Quản Trị Admin</h3>
+                            <p class="text-xs text-slate-400">Quyền quản lý hệ thống MF-Point</p>
+                        </div>
+                    </div>
+
+                    <!-- User Management Form -->
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Nhập ID Người Dùng Cần Thao Tác</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="adminTargetId" placeholder="VD: 00001" class="flex-1 bg-slate-950 border border-red-900/50 rounded-xl py-2 px-3 text-sm text-slate-100">
+                                <button id="adminSearchBtn" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-bold rounded-xl border border-slate-700">Tìm kiếm</button>
+                            </div>
+                        </div>
+
+                        <!-- User Info Display -->
+                        <div id="adminUserInfo" class="hidden p-4 rounded-2xl bg-slate-950/80 border border-purple-900/40 text-xs space-y-2">
+                            <div><span class="text-slate-400">Tên:</span> <span id="adminName" class="font-bold text-slate-200"></span></div>
+                            <div><span class="text-slate-400">Số points:</span> <span id="adminPts" class="font-bold text-yellow-400"></span></div>
+                            <div><span class="text-slate-400">Trạng thái:</span> <span id="adminStatus" class="font-bold"></span></div>
+                        </div>
+
+                        <!-- Modify Points -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="space-y-2">
+                                <label class="block text-xs text-slate-400">Cộng Points</label>
+                                <div class="flex gap-2">
+                                    <input type="number" id="adminAddPts" placeholder="Số PTS" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs">
+                                    <button id="adminAddPtsBtn" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-xs font-bold rounded-xl">Cộng</button>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-xs text-slate-400">Trừ Points</label>
+                                <div class="flex gap-2">
+                                    <input type="number" id="adminSubPts" placeholder="Số PTS" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs">
+                                    <button id="adminSubPtsBtn" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-xs font-bold rounded-xl">Trừ</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ban / Unban -->
+                        <div class="pt-2 flex gap-3">
+                            <button id="adminBanBtn" class="flex-1 py-2 bg-red-900/80 hover:bg-red-800 text-xs font-bold rounded-xl border border-red-700">
+                                Cấm Tài Khoản
+                            </button>
+                            <button id="adminUnbanBtn" class="flex-1 py-2 bg-emerald-900/80 hover:bg-emerald-800 text-xs font-bold rounded-xl border border-emerald-700">
+                                Bỏ Cấm
+                            </button>
+                        </div>
+
+                        <!-- Send Message -->
+                        <div class="pt-4 border-t border-red-900/40 space-y-2">
+                            <label class="block text-xs font-bold text-slate-300">Gửi Tin Nhắn Thông Báo</label>
+                            <textarea id="adminMsgText" placeholder="Nội dung thông báo..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-100 h-20 focus:outline-none"></textarea>
+                            <div class="flex gap-2">
+                                <button id="adminSendUserBtn" class="flex-1 py-2 bg-blue-600 hover:bg-blue-500 text-xs font-bold rounded-xl">
+                                    Gửi Cho User Này
+                                </button>
+                                <button id="adminSendAllBtn" class="flex-1 py-2 bg-purple-600 hover:bg-purple-500 text-xs font-bold rounded-xl">
+                                    Gửi Tất Cả User
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- GENERAL MODAL POPUP -->
+    <div id="customModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl p-6 w-full max-w-sm border border-purple-500/30 text-center space-y-4 animate-scale-up">
+            <div id="modalIcon" class="w-12 h-12 mx-auto rounded-2xl flex items-center justify-center text-xl"></div>
+            <h3 id="modalTitle" class="text-lg font-bold text-white"></h3>
+            <p id="modalMsg" class="text-xs text-slate-300"></p>
+            <div id="modalCustomSlot"></div>
+            <button id="modalCloseBtn" class="w-full py-2.5 bg-purple-600 hover:bg-purple-500 text-xs font-bold rounded-xl transition-all">
+                Đóng
+            </button>
+        </div>
+    </div>
+
+    <!-- CONFIRM PASSWORD MODAL -->
+    <div id="passConfirmModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl p-6 w-full max-w-sm border border-purple-500/30 space-y-4">
+            <h3 class="text-lg font-bold text-white text-center">Xác Nhận Mật Khẩu</h3>
+            <p class="text-xs text-slate-300 text-center">Vui lòng nhập mật khẩu tài khoản của bạn để xác nhận giao dịch này.</p>
+            <input type="password" id="confirmPassInput" placeholder="Mật khẩu của bạn" class="w-full bg-slate-950 border border-purple-900/50 rounded-xl py-2.5 px-3 text-sm focus:outline-none">
+            <div class="flex gap-2">
+                <button id="cancelConfirmBtn" class="flex-1 py-2 bg-slate-800 text-xs font-bold rounded-xl text-slate-300">Hủy</button>
+                <button id="submitConfirmBtn" class="flex-1 py-2 bg-purple-600 hover:bg-purple-500 text-xs font-bold rounded-xl text-white">Xác Nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN AUTH MODAL -->
+    <div id="adminAuthModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl p-6 w-full max-w-sm border border-red-500/30 space-y-4">
+            <div class="text-center">
+                <i class="fa-solid fa-user-shield text-red-500 text-3xl mb-2"></i>
+                <h3 class="text-lg font-bold text-white">Xác Minh Admin</h3>
+                <p class="text-xs text-slate-400">Nhập mật khẩu Admin để truy cập</p>
+            </div>
+            <input type="password" id="adminPassInput" placeholder="Mật khẩu admin" class="w-full bg-slate-950 border border-red-900/50 rounded-xl py-2.5 px-3 text-sm focus:outline-none">
+            <div class="flex gap-2">
+                <button id="cancelAdminAuthBtn" class="flex-1 py-2 bg-slate-800 text-xs font-bold rounded-xl text-slate-300">Hủy</button>
+                <button id="submitAdminAuthBtn" class="flex-1 py-2 bg-red-600 hover:bg-red-500 text-xs font-bold rounded-xl text-white">Truy Cập</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE MODULE & APPLICATION LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, onSnapshot, query, where, deleteDoc 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // User Provided Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAkgK_3ts28ucAFf1KkVCSLkiopP47FKfY",
+            authDomain: "mingfruit.firebaseapp.com",
+            databaseURL: "https://mingfruit-default-rtdb.firebaseio.com",
+            projectId: "mingfruit",
+            storageBucket: "mingfruit.firebasestorage.app",
+            messagingSenderId: "537977784405",
+            appId: "1:537977784405:web:291a7fbade564872f02cdc",
+            measurementId: "G-BT7Y2ZZN8J"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mf-point-app';
+
+        // Firebase Collection Paths (Strict Path Guidelines)
+        const USERS_COL = collection(db, 'artifacts', appId, 'public', 'data', 'users');
+        const META_DOC = doc(db, 'artifacts', appId, 'public', 'data', 'meta', 'counter');
+        const VOUCHERS_COL = collection(db, 'artifacts', appId, 'public', 'data', 'vouchers');
+        const NOTIFS_COL = collection(db, 'artifacts', appId, 'public', 'data', 'notifications');
+
+        // State Variables
+        let currentUser = null; // Stores current logged in user doc
+        let userUnsubscribe = null;
+        let notifUnsubscribe = null;
+        let pendingTransferData = null;
+
+        // Get Vietnam Date String (YYYY-MM-DD)
+        function getVNDateString() {
+            return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' });
+        }
+
+        // Format ID string with padding (e.g., 1 -> 00001, 99999 -> 99999, 100000 -> 100000)
+        function formatUserId(num) {
+            return String(num).padStart(5, '0');
+        }
+
+        // Custom Modal UI Helper
+        function showModal(title, message, iconType = 'info', customHtml = '') {
+            const modal = document.getElementById('customModal');
+            const iconEl = document.getElementById('modalIcon');
+            const titleEl = document.getElementById('modalTitle');
+            const msgEl = document.getElementById('modalMsg');
+            const slotEl = document.getElementById('modalCustomSlot');
+
+            titleEl.textContent = title;
+            msgEl.textContent = message;
+            slotEl.innerHTML = customHtml;
+
+            if (iconType === 'success') {
+                iconEl.className = 'w-12 h-12 mx-auto rounded-2xl flex items-center justify-center text-xl bg-emerald-950 text-emerald-400 border border-emerald-500/30';
+                iconEl.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+            } else if (iconType === 'error') {
+                iconEl.className = 'w-12 h-12 mx-auto rounded-2xl flex items-center justify-center text-xl bg-red-950 text-red-400 border border-red-500/30';
+                iconEl.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>';
+            } else {
+                iconEl.className = 'w-12 h-12 mx-auto rounded-2xl flex items-center justify-center text-xl bg-purple-950 text-purple-400 border border-purple-500/30';
+                iconEl.innerHTML = '<i class="fa-solid fa-bell"></i>';
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        document.getElementById('modalCloseBtn').addEventListener('click', () => {
+            document.getElementById('customModal').classList.add('hidden');
+        });
+
+        // Copy Text Helper
+        window.copyToClipboard = function(text) {
+            const input = document.createElement('input');
+            input.value = text;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+            showModal('Thành Công', `Đã sao chép mã: ${text}`, 'success');
+        };
+
+        // Switch between Login and Register Tabs
+        document.getElementById('switchToReg').addEventListener('click', () => {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('regForm').classList.remove('hidden');
+        });
+        document.getElementById('switchToLogin').addEventListener('click', () => {
+            document.getElementById('regForm').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+        });
+
+        // Register Account
+        document.getElementById('regForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('regName').value.trim();
+            const password = document.getElementById('regPass').value;
+
+            if (!username || !password) return;
+
+            try {
+                // Get next user ID counter from Firestore
+                let nextNum = 1;
+                const metaSnap = await getDoc(META_DOC);
+                if (metaSnap.exists()) {
+                    nextNum = (metaSnap.data().lastId || 0) + 1;
+                }
+                
+                const userId = formatUserId(nextNum);
+                const userDocRef = doc(USERS_COL, userId);
+
+                const newUser = {
+                    id: userId,
+                    username: username,
+                    password: password,
+                    points: 0,
+                    isBanned: false,
+                    dailyTasks: {
+                        lastReset: getVNDateString(),
+                        loginClaimed: false,
+                        shortlinkCount: 0,
+                        shortlinkClaimed: false,
+                        luckyTicketCount: 0,
+                        luckyTicketClaimed: false,
+                        adCount: 0,
+                        adClaimed: false
+                    },
+                    claimedCodes: [],
+                    createdAt: Date.now()
+                };
+
+                await setDoc(userDocRef, newUser);
+                await setDoc(META_DOC, { lastId: nextNum }, { merge: true });
+
+                showModal('Đăng Ký Thành Công!', `ID của bạn là: ${userId}. Hãy lưu lại ID này để đăng nhập!`, 'success');
+                
+                // Switch back to login form & autofill ID
+                document.getElementById('regForm').reset();
+                document.getElementById('regForm').classList.add('hidden');
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('loginId').value = userId;
+
+            } catch (err) {
+                console.error(err);
+                showModal('Lỗi', 'Không thể khởi tạo tài khoản. Vui lòng thử lại!', 'error');
+            }
+        });
+
+        // Login Account
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userId = document.getElementById('loginId').value.trim();
+            const password = document.getElementById('loginPass').value;
+
+            try {
+                const userDocRef = doc(USERS_COL, userId);
+                const userSnap = await getDoc(userDocRef);
+
+                if (!userSnap.exists()) {
+                    showModal('Thất Bại', 'ID tài khoản không tồn tại!', 'error');
+                    return;
+                }
+
+                const userData = userSnap.data();
+
+                if (userData.isBanned) {
+                    showModal('Tài Khoản Bị Cấm', 'Tài khoản của bạn đã bị khóa bởi Admin!', 'error');
+                    return;
+                }
+
+                if (userData.password !== password) {
+                    showModal('Thất Bại', 'Mật khẩu không chính xác!', 'error');
+                    return;
+                }
+
+                // Successful login
+                listenToUserData(userId);
+                listenToNotifications(userId);
+
+            } catch (err) {
+                console.error(err);
+                showModal('Lỗi', 'Đã xảy ra lỗi khi đăng nhập!', 'error');
+            }
+        });
+
+        // Listen to User Realtime Data Changes
+        function listenToUserData(userId) {
+            if (userUnsubscribe) userUnsubscribe();
+
+            const userDocRef = doc(USERS_COL, userId);
+            userUnsubscribe = onSnapshot(userDocRef, (snapshot) => {
+                if (!snapshot.exists()) return;
+                
+                currentUser = snapshot.data();
+
+                // Check Daily Reset (VN Time 00:00)
+                const today = getVNDateString();
+                if (currentUser.dailyTasks.lastReset !== today) {
+                    // Reset Daily Tasks
+                    const resetTasks = {
+                        lastReset: today,
+                        loginClaimed: false,
+                        shortlinkCount: 0,
+                        shortlinkClaimed: false,
+                        luckyTicketCount: 0,
+                        luckyTicketClaimed: false,
+                        adCount: 0,
+                        adClaimed: false
+                    };
+                    updateDoc(userDocRef, { dailyTasks: resetTasks });
+                    return;
+                }
+
+                // Show UI & Render Current State
+                document.getElementById('authSection').classList.add('hidden');
+                document.getElementById('mainHeader').classList.remove('hidden');
+                document.getElementById('appSection').classList.remove('hidden');
+
+                updateUI();
+            }, (error) => {
+                console.error("User listener error:", error);
+            });
+        }
+
+        // Update All UI Elements
+        function updateUI() {
+            if (!currentUser) return;
+
+            // Header & Home Banner
+            document.getElementById('headerPoints').textContent = currentUser.points.toLocaleString();
+            document.getElementById('homePoints').textContent = currentUser.points.toLocaleString();
+            document.getElementById('homeUserId').textContent = currentUser.id;
+            document.getElementById('homeUserName').textContent = currentUser.username;
+            document.getElementById('sidebarUsername').textContent = currentUser.username;
+            document.getElementById('sidebarUserId').textContent = `ID: ${currentUser.id}`;
+
+            const dt = currentUser.dailyTasks;
+
+            // Daily Login Button
+            const claimDailyBtn = document.getElementById('claimDailyBtn');
+            if (dt.loginClaimed) {
+                claimDailyBtn.disabled = true;
+                claimDailyBtn.textContent = 'Đã Nhận';
+            } else {
+                claimDailyBtn.disabled = false;
+                claimDailyBtn.textContent = 'Nhận 10 PTS';
+            }
+
+            // Shortlink Task
+            document.getElementById('shortlinkProgress').textContent = `${dt.shortlinkCount}/5`;
+            const claimShortlinkBtn = document.getElementById('claimShortlinkBtn');
+            if (dt.shortlinkClaimed) {
+                claimShortlinkBtn.disabled = true;
+                claimShortlinkBtn.textContent = 'Đã Nhận';
+            } else if (dt.shortlinkCount >= 5) {
+                claimShortlinkBtn.disabled = false;
+            } else {
+                claimShortlinkBtn.disabled = true;
+            }
+
+            // Lucky Ticket Task
+            document.getElementById('luckyTaskProgress').textContent = `${dt.luckyTicketCount}/3`;
+            const claimLuckyTaskBtn = document.getElementById('claimLuckyTaskBtn');
+            if (dt.luckyTicketClaimed) {
+                claimLuckyTaskBtn.disabled = true;
+                claimLuckyTaskBtn.textContent = 'Đã Nhận';
+            } else if (dt.luckyTicketCount >= 3) {
+                claimLuckyTaskBtn.disabled = false;
+            } else {
+                claimLuckyTaskBtn.disabled = true;
+            }
+
+            // Ads Task
+            document.getElementById('adTaskProgress').textContent = `${dt.adCount}/3`;
+            const claimAdTaskBtn = document.getElementById('claimAdTaskBtn');
+            if (dt.adClaimed) {
+                claimAdTaskBtn.disabled = true;
+                claimAdTaskBtn.textContent = 'Đã Nhận';
+            } else if (dt.adCount >= 3) {
+                claimAdTaskBtn.disabled = false;
+            } else {
+                claimAdTaskBtn.disabled = true;
+            }
+        }
+
+        // Task 1: Claim Daily Login
+        document.getElementById('claimDailyBtn').addEventListener('click', async () => {
+            if (!currentUser || currentUser.dailyTasks.loginClaimed) return;
+            const userRef = doc(USERS_COL, currentUser.id);
+            await updateDoc(userRef, {
+                points: currentUser.points + 10,
+                'dailyTasks.loginClaimed': true
+            });
+            addNotification(currentUser.id, "Bạn đã nhận 10 Points thưởng điểm danh hàng ngày!");
+            showModal('Thành Công', 'Bạn đã nhận 10 Points!', 'success');
+        });
+
+        // Task 2: Visit Shortlink
+        document.getElementById('visitShortlinkBtn').addEventListener('click', async () => {
+            if (!currentUser) return;
+            window.open('https://link4m.org/sZInWj', '_blank');
+            if (currentUser.dailyTasks.shortlinkCount < 5) {
+                const userRef = doc(USERS_COL, currentUser.id);
+                await updateDoc(userRef, {
+                    'dailyTasks.shortlinkCount': currentUser.dailyTasks.shortlinkCount + 1
+                });
+            }
+        });
+
+        document.getElementById('claimShortlinkBtn').addEventListener('click', async () => {
+            if (!currentUser || currentUser.dailyTasks.shortlinkCount < 5 || currentUser.dailyTasks.shortlinkClaimed) return;
+            const userRef = doc(USERS_COL, currentUser.id);
+            await updateDoc(userRef, {
+                points: currentUser.points + 150,
+                'dailyTasks.shortlinkClaimed': true
+            });
+            addNotification(currentUser.id, "Bạn đã hoàn thành nhiệm vụ vượt link và nhận 150 Points!");
+            showModal('Thành Công', 'Bạn đã nhận 150 Points!', 'success');
+        });
+
+        // Task 3: Claim Lucky Ticket Task Reward
+        document.getElementById('claimLuckyTaskBtn').addEventListener('click', async () => {
+            if (!currentUser || currentUser.dailyTasks.luckyTicketCount < 3 || currentUser.dailyTasks.luckyTicketClaimed) return;
+            const userRef = doc(USERS_COL, currentUser.id);
+            await updateDoc(userRef, {
+                points: currentUser.points + 20,
+                'dailyTasks.luckyTicketClaimed': true
+            });
+            addNotification(currentUser.id, "Bạn đã nhận 20 Points nhiệm vụ mua 3 vé may mắn!");
+            showModal('Thành Công', 'Bạn đã nhận 20 Points!', 'success');
+        });
+
+        // Task 4: Watch Ad
+        document.getElementById('watchAdBtn').addEventListener('click', async () => {
+            if (!currentUser) return;
+            window.open('https://www.profitableratecpmnetwork.com/raqdz9x41?key=99b16e6819680380f1d5bd964d75b7dd', '_blank');
+            if (currentUser.dailyTasks.adCount < 3) {
+                const userRef = doc(USERS_COL, currentUser.id);
+                await updateDoc(userRef, {
+                    'dailyTasks.adCount': currentUser.dailyTasks.adCount + 1
+                });
+            }
+        });
+
+        document.getElementById('claimAdTaskBtn').addEventListener('click', async () => {
+            if (!currentUser || currentUser.dailyTasks.adCount < 3 || currentUser.dailyTasks.adClaimed) return;
+            const userRef = doc(USERS_COL, currentUser.id);
+            await updateDoc(userRef, {
+                points: currentUser.points + 50,
+                'dailyTasks.adClaimed': true
+            });
+            addNotification(currentUser.id, "Bạn đã nhận 50 Points thưởng xem quảng cáo!");
+            showModal('Thành Công', 'Bạn đã nhận 50 Points!', 'success');
+        });
+
+        // Transfer Points Form Submit
+        document.getElementById('transferForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const targetId = document.getElementById('transferTargetId').value.trim();
+            const amount = parseInt(document.getElementById('transferAmount').value);
+
+            if (targetId === currentUser.id) {
+                showModal('Lỗi', 'Không thể tự chuyển điểm cho chính mình!', 'error');
+                return;
+            }
+            if (isNaN(amount) || amount <= 0) {
+                showModal('Lỗi', 'Số points không hợp lệ!', 'error');
+                return;
+            }
+            if (amount > currentUser.points) {
+                showModal('Lỗi', 'Số dư Points của bạn không đủ!', 'error');
+                return;
+            }
+
+            pendingTransferData = { targetId, amount };
+            document.getElementById('passConfirmModal').classList.remove('hidden');
+        });
+
+        // Confirm Password Modal for Transfer
+        document.getElementById('cancelConfirmBtn').addEventListener('click', () => {
+            document.getElementById('passConfirmModal').classList.add('hidden');
+            pendingTransferData = null;
+        });
+
+        document.getElementById('submitConfirmBtn').addEventListener('click', async () => {
+            const pass = document.getElementById('confirmPassInput').value;
+            if (pass !== currentUser.password) {
+                showModal('Xác Nhận Thất Bại', 'Mật khẩu xác nhận không đúng!', 'error');
+                return;
+            }
+
+            document.getElementById('passConfirmModal').classList.add('hidden');
+            document.getElementById('confirmPassInput').value = '';
+
+            if (!pendingTransferData) return;
+
+            const { targetId, amount } = pendingTransferData;
+            pendingTransferData = null;
+
+            try {
+                const targetRef = doc(USERS_COL, targetId);
+                const targetSnap = await getDoc(targetRef);
+
+                if (!targetSnap.exists()) {
+                    showModal('Lỗi', 'ID người nhận không tồn tại!', 'error');
+                    return;
+                }
+
+                const targetData = targetSnap.data();
+
+                // Deduct from current user
+                const userRef = doc(USERS_COL, currentUser.id);
+                await updateDoc(userRef, { points: currentUser.points - amount });
+
+                // Add to target user
+                await updateDoc(targetRef, { points: targetData.points + amount });
+
+                // Notifications
+                addNotification(currentUser.id, `Bạn đã chuyển ${amount} Points cho ID: ${targetId}`);
+                addNotification(targetId, `Bạn đã nhận ${amount} Points từ ID: ${currentUser.id}`);
+
+                document.getElementById('transferForm').reset();
+                showModal('Thành Công', `Đã chuyển thành công ${amount} Points cho ID ${targetId}!`, 'success');
+
+            } catch (err) {
+                console.error(err);
+                showModal('Lỗi', 'Đã xảy ra lỗi khi thực hiện giao dịch!', 'error');
+            }
+        });
+
+        // Create Voucher Code
+        document.querySelectorAll('.create-code-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const amount = parseInt(btn.getAttribute('data-value'));
+                if (isNaN(amount) || amount > currentUser.points) {
+                    showModal('Thất Bại', 'Số dư Points của bạn không đủ để tạo mã này!', 'error');
+                    return;
+                }
+
+                try {
+                    // Generate Random Voucher Code
+                    const randomCode = 'MF' + Math.random().toString(36).substring(2, 8).toUpperCase();
+                    
+                    // Deduct user points
+                    const userRef = doc(USERS_COL, currentUser.id);
+                    await updateDoc(userRef, { points: currentUser.points - amount });
+
+                    // Save Voucher in DB
+                    const voucherRef = doc(VOUCHERS_COL, randomCode);
+                    await setDoc(voucherRef, {
+                        code: randomCode,
+                        points: amount,
+                        creatorId: currentUser.id,
+                        isUsed: false,
+                        createdAt: Date.now()
+                    });
+
+                    addNotification(currentUser.id, `Bạn đã tạo mã nạp ${randomCode} mệnh giá ${amount} Points`);
+
+                    const customHtml = `
+                        <div class="my-3 p-3 bg-slate-950 border border-purple-500/40 rounded-xl flex items-center justify-between">
+                            <span class="font-mono font-bold text-yellow-400 text-base">${randomCode}</span>
+                            <button onclick="copyToClipboard('${randomCode}')" class="px-3 py-1 bg-purple-600 hover:bg-purple-500 text-xs font-bold rounded-lg">Sao Chép</button>
+                        </div>
+                    `;
+                    showModal('Tạo Mã Thành Công', `Mã quà tặng của bạn có mệnh giá ${amount} Points.`, 'success', customHtml);
+
+                } catch (err) {
+                    console.error(err);
+                    showModal('Lỗi', 'Không thể tạo mã voucher!', 'error');
+                }
+            });
+        });
+
+        // Redeem Code Input Form
+        document.getElementById('redeemForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const inputCode = document.getElementById('redeemInput').value.trim();
+            if (!inputCode) return;
+
+            // Check Secret Admin Entry Code
+            if (inputCode === '3667') {
+                document.getElementById('adminAuthModal').classList.remove('hidden');
+                document.getElementById('redeemInput').value = '';
+                return;
+            }
+
+            // Check Newbie Code
+            if (inputCode.toUpperCase() === 'ABC123') {
+                if (currentUser.claimedCodes && currentUser.claimedCodes.includes('ABC123')) {
+                    showModal('Thất Bại', 'Bạn đã nhận quà người mới từ mã này rồi!', 'error');
+                    return;
+                }
+
+                const userRef = doc(USERS_COL, currentUser.id);
+                const updatedCodes = [...(currentUser.claimedCodes || []), 'ABC123'];
+                await updateDoc(userRef, {
+                    points: currentUser.points + 200,
+                    claimedCodes: updatedCodes
+                });
+
+                addNotification(currentUser.id, "Bạn đã đổi mã người mới ABC123 thành công (+200 Points)");
+                document.getElementById('redeemInput').value = '';
+                showModal('Thành Công!', 'Chúc mừng bạn đã nhận 200 Points tân thủ!', 'success');
+                return;
+            }
+
+            // Check Voucher or Lucky Ticket Codes in Database
+            try {
+                const voucherRef = doc(VOUCHERS_COL, inputCode.toUpperCase());
+                const voucherSnap = await getDoc(voucherRef);
+
+                if (!voucherSnap.exists()) {
+                    showModal('Thất Bại', 'Mã đổi thưởng không hợp lệ!', 'error');
+                    return;
+                }
+
+                const voucher = voucherSnap.data();
+
+                if (voucher.isUsed) {
+                    showModal('Thất Bại', 'Mã đổi thưởng này đã được sử dụng trước đó!', 'error');
+                    return;
+                }
+
+                // Mark voucher as used & add points to user
+                await updateDoc(voucherRef, {
+                    isUsed: true,
+                    usedById: currentUser.id,
+                    usedAt: Date.now()
+                });
+
+                const userRef = doc(USERS_COL, currentUser.id);
+                await updateDoc(userRef, {
+                    points: currentUser.points + voucher.points
+                });
+
+                addNotification(currentUser.id, `Bạn đã nạp thành công mã ${voucher.code} (+${voucher.points} Points)`);
+                document.getElementById('redeemInput').value = '';
+                showModal('Thành Công', `Đã nạp thành công ${voucher.points} Points vào tài khoản!`, 'success');
+
+            } catch (err) {
+                console.error(err);
+                showModal('Lỗi', 'Không thể xử lý mã đổi thưởng!', 'error');
+            }
+        });
+
+        // Buy Lucky Ticket
+        document.getElementById('buyLuckyTicketBtn').addEventListener('click', async () => {
+            if (!currentUser) return;
+            if (currentUser.points < 15) {
+                showModal('Thất Bại', 'Bạn không có đủ 15 Points để mua vé!', 'error');
+                return;
+            }
+
+            try {
+                // Deduct 15 Points and increment daily ticket counter
+                const userRef = doc(USERS_COL, currentUser.id);
+                const updatedCount = (currentUser.dailyTasks.luckyTicketCount || 0) + 1;
+                await updateDoc(userRef, {
+                    points: currentUser.points - 15,
+                    'dailyTasks.luckyTicketCount': updatedCount
+                });
+
+                // Calculate Prize Probability
+                // 40%: 0, 25%: 5, 15%: 10, 10%: 20, 6%: 50, 3%: 100, 1%: 1000
+                const rand = Math.floor(Math.random() * 100) + 1; // 1-100
+                let rewardPoints = 0;
+
+                if (rand <= 40) rewardPoints = 0;
+                else if (rand <= 65) rewardPoints = 5;
+                else if (rand <= 80) rewardPoints = 10;
+                else if (rand <= 90) rewardPoints = 20;
+                else if (rand <= 96) rewardPoints = 50;
+                else if (rand <= 99) rewardPoints = 100;
+                else rewardPoints = 1000;
+
+                // Format 5-character Code: XXX?? (3 letters + 2 numbers)
+                const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                let codeLetters = "";
+                for(let i = 0; i < 3; i++) {
+                    codeLetters += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                const codeNums = String(Math.floor(Math.random() * 100)).padStart(2, '0');
+                const ticketCode = codeLetters + codeNums;
+
+                // Save code to DB as a voucher
+                const voucherRef = doc(VOUCHERS_COL, ticketCode);
+                await setDoc(voucherRef, {
+                    code: ticketCode,
+                    points: rewardPoints,
+                    creatorId: 'LUCKY_SYSTEM',
+                    isUsed: false,
+                    createdAt: Date.now()
+                });
+
+                addNotification(currentUser.id, `Bạn đã mua vé may mắn và nhận được mã: ${ticketCode}`);
+
+                const resultTitle = rewardPoints > 0 ? `Trúng Thưởng ${rewardPoints} PTS!` : 'Chúc May Mắn Lần Sau!';
+                const customHtml = `
+                    <div class="my-4 p-4 bg-slate-950 border border-yellow-500/40 rounded-2xl space-y-3 text-center">
+                        <div class="text-xs text-slate-400">Mã trúng thưởng của bạn:</div>
+                        <div class="font-mono font-black text-2xl text-yellow-300 tracking-widest">${ticketCode}</div>
+                        <p class="text-xs text-purple-300">Dán mã này vào mục <b>"Nhập Mã"</b> để cộng ${rewardPoints} Points vào tài khoản!</p>
+                        <button onclick="copyToClipboard('${ticketCode}')" class="w-full py-2 bg-yellow-500 hover:bg-yellow-400 font-bold text-slate-950 text-xs rounded-xl transition-all">
+                            <i class="fa-solid fa-copy mr-1"></i> Sao Chép Mã
+                        </button>
+                    </div>
+                `;
+
+                showModal(resultTitle, `Mã vé số may mắn 5 ký tự của bạn đã được khởi tạo!`, rewardPoints > 0 ? 'success' : 'info', customHtml);
+
+            } catch (err) {
+                console.error(err);
+                showModal('Lỗi', 'Không thể hoàn tất mua vé!', 'error');
+            }
+        });
+
+        // Listen to User Notifications
+        function listenToNotifications(userId) {
+            if (notifUnsubscribe) notifUnsubscribe();
+
+            notifUnsubscribe = onSnapshot(NOTIFS_COL, (snapshot) => {
+                const notifList = document.getElementById('notifList');
+                notifList.innerHTML = '';
+
+                const userNotifs = [];
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    if (data.targetId === userId || data.targetId === 'ALL') {
+                        userNotifs.push(data);
+                    }
+                });
+
+                userNotifs.sort((a, b) => b.createdAt - a.createdAt);
+                document.getElementById('notifCount').textContent = userNotifs.length;
+
+                if (userNotifs.length === 0) {
+                    notifList.innerHTML = '<p class="text-center text-xs text-slate-500 py-6">Chưa có thông báo nào</p>';
+                    return;
+                }
+
+                userNotifs.forEach(item => {
+                    const dateStr = new Date(item.createdAt).toLocaleString('vi-VN');
+                    const div = document.createElement('div');
+                    div.className = 'p-3 rounded-2xl bg-slate-950/60 border border-purple-900/30 text-xs flex justify-between items-start gap-2';
+                    div.innerHTML = `
+                        <div>
+                            <p class="text-slate-200 font-medium">${item.message}</p>
+                            <span class="text-[10px] text-slate-500 mt-1 block">${dateStr}</span>
+                        </div>
+                        <i class="fa-solid fa-bell text-purple-400 text-xs mt-0.5"></i>
+                    `;
+                    notifList.appendChild(div);
+                });
+            }, (err) => console.error(err));
+        }
+
+        // Helper to push notification to DB
+        async function addNotification(targetId, message) {
+            const notifRef = doc(NOTIFS_COL, 'NOTIF_' + Date.now() + '_' + Math.random().toString(36).substring(2, 5));
+            await setDoc(notifRef, {
+                targetId: targetId,
+                message: message,
+                createdAt: Date.now()
+            });
+        }
+
+        // Change Password
+        document.getElementById('changePassForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const oldPass = document.getElementById('oldPass').value;
+            const newPass = document.getElementById('newPass').value;
+
+            if (oldPass !== currentUser.password) {
+                showModal('Thất Bại', 'Mật khẩu hiện tại không chính xác!', 'error');
+                return;
+            }
+
+            const userRef = doc(USERS_COL, currentUser.id);
+            await updateDoc(userRef, { password: newPass });
+            document.getElementById('changePassForm').reset();
+            showModal('Thành Công', 'Đổi mật khẩu thành công!', 'success');
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            if (userUnsubscribe) userUnsubscribe();
+            if (notifUnsubscribe) notifUnsubscribe();
+            currentUser = null;
+
+            document.getElementById('mainHeader').classList.add('hidden');
+            document.getElementById('appSection').classList.add('hidden');
+            document.getElementById('authSection').classList.remove('hidden');
+            document.getElementById('loginForm').reset();
+            document.getElementById('regForm').reset();
+        });
+
+        // Delete Account
+        document.getElementById('deleteAccBtn').addEventListener('click', async () => {
+            if (!currentUser) return;
+            const userRef = doc(USERS_COL, currentUser.id);
+            await deleteDoc(userRef);
+            
+            showModal('Đã Xoá Tài Khoản', 'Tài khoản của bạn đã được xoá vĩnh viễn khỏi hệ thống.', 'info');
+            document.getElementById('logoutBtn').click();
+        });
+
+        // Admin Auth Modal logic
+        document.getElementById('cancelAdminAuthBtn').addEventListener('click', () => {
+            document.getElementById('adminAuthModal').classList.add('hidden');
+        });
+
+        document.getElementById('submitAdminAuthBtn').addEventListener('click', () => {
+            const pass = document.getElementById('adminPassInput').value;
+            if (pass === 'mingfruit36') {
+                document.getElementById('adminAuthModal').classList.add('hidden');
+                document.getElementById('adminPassInput').value = '';
+                document.getElementById('adminNavBtn').classList.remove('hidden');
+                
+                // Open Admin Tab
+                document.querySelector('[data-target="adminTab"]').click();
+                showModal('Admin Access Granted', 'Đăng nhập trang quản trị thành công!', 'success');
+            } else {
+                showModal('Thất Bại', 'Mật khẩu Admin không đúng!', 'error');
+            }
+        });
+
+        // Admin Search Target User
+        let adminTargetUser = null;
+        document.getElementById('adminSearchBtn').addEventListener('click', async () => {
+            const targetId = document.getElementById('adminTargetId').value.trim();
+            if (!targetId) return;
+
+            const targetRef = doc(USERS_COL, targetId);
+            const snap = await getDoc(targetRef);
+
+            if (!snap.exists()) {
+                showModal('Không Tìm Thấy', `Không tồn tại tài khoản có ID: ${targetId}`, 'error');
+                document.getElementById('adminUserInfo').classList.add('hidden');
+                adminTargetUser = null;
+                return;
+            }
+
+            adminTargetUser = snap.data();
+            document.getElementById('adminName').textContent = adminTargetUser.username;
+            document.getElementById('adminPts').textContent = adminTargetUser.points.toLocaleString();
+            document.getElementById('adminStatus').textContent = adminTargetUser.isBanned ? 'Đang bị cấm' : 'Bình thường';
+            document.getElementById('adminStatus').className = adminTargetUser.isBanned ? 'font-bold text-red-500' : 'font-bold text-emerald-400';
+            document.getElementById('adminUserInfo').classList.remove('hidden');
+        });
+
+        // Admin Add Points
+        document.getElementById('adminAddPtsBtn').addEventListener('click', async () => {
+            if (!adminTargetUser) return;
+            const pts = parseInt(document.getElementById('adminAddPts').value);
+            if (isNaN(pts) || pts <= 0) return;
+
+            const targetRef = doc(USERS_COL, adminTargetUser.id);
+            await updateDoc(targetRef, { points: adminTargetUser.points + pts });
+            addNotification(adminTargetUser.id, `Admin đã cộng ${pts} Points vào tài khoản của bạn.`);
+            
+            showModal('Thành Công', `Đã cộng ${pts} Points cho ID ${adminTargetUser.id}`, 'success');
+            document.getElementById('adminSearchBtn').click();
+        });
+
+        // Admin Subtract Points
+        document.getElementById('adminSubPtsBtn').addEventListener('click', async () => {
+            if (!adminTargetUser) return;
+            const pts = parseInt(document.getElementById('adminSubPts').value);
+            if (isNaN(pts) || pts <= 0) return;
+
+            const targetRef = doc(USERS_COL, adminTargetUser.id);
+            const newPts = Math.max(0, adminTargetUser.points - pts);
+            await updateDoc(targetRef, { points: newPts });
+            addNotification(adminTargetUser.id, `Admin đã trừ ${pts} Points từ tài khoản của bạn.`);
+
+            showModal('Thành Công', `Đã trừ ${pts} Points của ID ${adminTargetUser.id}`, 'success');
+            document.getElementById('adminSearchBtn').click();
+        });
+
+        // Admin Ban User
+        document.getElementById('adminBanBtn').addEventListener('click', async () => {
+            if (!adminTargetUser) return;
+            const targetRef = doc(USERS_COL, adminTargetUser.id);
+            await updateDoc(targetRef, { isBanned: true });
+            showModal('Thành Công', `Đã cấm tài khoản ID ${adminTargetUser.id}`, 'success');
+            document.getElementById('adminSearchBtn').click();
+        });
+
+        // Admin Unban User
+        document.getElementById('adminUnbanBtn').addEventListener('click', async () => {
+            if (!adminTargetUser) return;
+            const targetRef = doc(USERS_COL, adminTargetUser.id);
+            await updateDoc(targetRef, { isBanned: false });
+            showModal('Thành Công', `Đã bỏ cấm tài khoản ID ${adminTargetUser.id}`, 'success');
+            document.getElementById('adminSearchBtn').click();
+        });
+
+        // Admin Send Message
+        document.getElementById('adminSendUserBtn').addEventListener('click', async () => {
+            if (!adminTargetUser) return;
+            const msg = document.getElementById('adminMsgText').value.trim();
+            if (!msg) return;
+
+            await addNotification(adminTargetUser.id, `[THÔNG BÁO TỪ ADMIN]: ${msg}`);
+            document.getElementById('adminMsgText').value = '';
+            showModal('Thành Công', 'Đã gửi thông báo tới người dùng này!', 'success');
+        });
+
+        document.getElementById('adminSendAllBtn').addEventListener('click', async () => {
+            const msg = document.getElementById('adminMsgText').value.trim();
+            if (!msg) return;
+
+            await addNotification('ALL', `[THÔNG BÁO HỆ THỐNG]: ${msg}`);
+            document.getElementById('adminMsgText').value = '';
+            showModal('Thành Công', 'Đã gửi thông báo tới tất cả người dùng!', 'success');
+        });
+
+        // Sidebar Navigation Handling
+        const openMenuBtn = document.getElementById('openMenuBtn');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebar = document.getElementById('sidebar');
+
+        function openSidebar() {
+            sidebarOverlay.classList.remove('hidden');
+            setTimeout(() => {
+                sidebarOverlay.classList.remove('opacity-0');
+                sidebar.classList.remove('-translate-x-full');
+            }, 10);
+        }
+
+        function closeSidebar() {
+            sidebarOverlay.classList.add('opacity-0');
+            sidebar.classList.add('-translate-x-full');
+            setTimeout(() => {
+                sidebarOverlay.classList.add('hidden');
+            }, 300);
+        }
+
+        openMenuBtn.addEventListener('click', openSidebar);
+        closeMenuBtn.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', (e) => {
+            if (e.target === sidebarOverlay) closeSidebar();
+        });
+
+        // Tab Switching Logic
+        const navBtns = document.querySelectorAll('.nav-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-target');
+                if (!targetId) return;
+
+                tabContents.forEach(tab => tab.classList.add('hidden'));
+                document.getElementById(targetId).classList.remove('hidden');
+
+                navBtns.forEach(b => b.classList.remove('bg-purple-950/50', 'text-purple-300', 'border-purple-500/30'));
+                btn.classList.add('bg-purple-950/50', 'text-purple-300', 'border-purple-500/30');
+
+                closeSidebar();
+            });
+        });
+    </script>
+</body>
+</html>
